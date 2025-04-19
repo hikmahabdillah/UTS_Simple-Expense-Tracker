@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id(); // BIGINT auto increment, primary key
+            $table->decimal('balance', 12, 2)->default(0); // Menambahkan nilai awal saldo = 0
             $table->string('title'); // VARCHAR
             $table->decimal('amount', 12, 2); // Decimal(12,2)
             $table->enum('category', [ // ENUM
