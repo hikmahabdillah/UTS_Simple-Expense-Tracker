@@ -1,22 +1,27 @@
 @extends('layouts.template')
 
 @section('content')
-    <h1 class="!font-semibold text-xl !font-poppins ms-3 my-3">Financial Data</h1>
+    <h1 class="!font-semibold text-xl !font-poppins ms-3 my-3 animate-fade-right animate-once animate-duration-1000">
+        Financial Data</h1>
     <div class="flex justify-center items-center gap-4 mb-4 font-poppins">
-        <div class="p-3 rounded-xl shadow-md w-full border border-gray-100 flex flex-col border-l-2 border-l-blue-500">
+        <div
+            class="animate-jump-in animate-delay-500 animate-once animate-duration-800 bg-white p-3 rounded-xl shadow-md w-full border border-gray-100 !border-l-4 !border-l-blue-500 ">
             <p class="font-medium mb-1">Current Balance</p>
-            <p class="font-semibold text-xl mb-2">Rp {{ number_format($balance, 2, ',', '.') }}</p>
+            <p class="font-semibold text-xl mb-2" id="currentBalance">Rp {{ number_format($balance, 2, ',', '.') }}</p>
         </div>
-        <div class="p-3 rounded-xl shadow-md w-full border border-gray-100">
+        <div
+            class="animate-jump-in animate-delay-700 animate-once animate-duration-800 bg-white p-3 rounded-xl shadow-md w-full border border-gray-100 !border-l-4 !border-l-red-500">
             <p class="font-medium mb-1">Total Expense</p>
-            <p class="font-semibold text-xl mb-2">Rp {{ number_format($totalExpense, 2, ',', '.') }}</p>
+            <p class="font-semibold text-xl mb-2" id="totalExpense">Rp {{ number_format($totalExpense, 2, ',', '.') }}</p>
         </div>
-        <div class="p-3 rounded-xl shadow-md w-full border border-gray-100">
+        <div
+            class="animate-jump-in animate-delay-1000 animate-once animate-duration-800 bg-white p-3 rounded-xl shadow-md w-full border border-gray-100 !border-l-4 !border-l-green-500">
             <p class="font-medium mb-1">Total Income</p>
-            <p class="font-semibold text-xl mb-2">Rp {{ number_format($totalIncome, 2, ',', '.') }}</p>
+            <p class="font-semibold text-xl mb-2" id="totalIncome">Rp {{ number_format($totalIncome, 2, ',', '.') }}</p>
         </div>
     </div>
-    <div class="card card-outline card-primary pt-2 font-poppins">
+    <div
+        class="card card-outline card-primary pt-2 font-poppins animate-fade-up animate-once animate-duration-1000 animate-delay-1200">
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
@@ -60,6 +65,24 @@
                 $('#myModal').modal('show');
             });
         }
+
+        let currentBalance = $('#currentBalance');
+        let totalExpense = $('#totalExpense');
+        let totalIncome = $('#totalIncome');
+
+        function parseRupiah(rupiahString) {
+            if (!rupiahString) return 0;
+            return parseFloat(
+                rupiahString
+                .replace(/[^0-9,-]/g, '') // hilangkan selain angka, koma, dan minus
+                .replace(/\./g, '') // hapus titik ribuan
+                .replace(',', '.') // ubah koma ke titik agar bisa dibaca JS
+            );
+        }
+
+        let balanceValue = parseRupiah(currentBalance.text());
+        let expenseValue = parseRupiah(totalExpense.text());
+        let incomeValue = parseRupiah(totalIncome.text());
 
         let dataExpenses;
         $(document).ready(function() {

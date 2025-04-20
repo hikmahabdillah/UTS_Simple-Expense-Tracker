@@ -12,14 +12,14 @@ class ExpenseController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $expenses = expense::select('id', 'title', 'amount', 'category', 'type', 'description', 'balance');
+            $expenses = expense::select('id', 'title', 'amount', 'category', 'type', 'description');
 
             return DataTables::of($expenses)
                 ->addIndexColumn()
                 ->addColumn('aksi', function ($expense) {
                     $btn  = '<button onclick="modalAction(\'' . url('/' . $expense->id) . '\')" class="btn btn-info btn-sm size-8"><i class="fa-solid fa-info"></i></button> ';
                     $btn .= '<button onclick="modalAction(\'' . url('/' . $expense->id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm size-8"><i class="fa-regular fa-pen-to-square"></i></button> ';
-                    $btn .= '<button onclick="modalAction(\'' . url('/' . $expense->id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm size-8"><i class="fa-solid fa-eraser"></i></button> ';
+                    $btn .= '<button onclick="modalAction(\'' . url('/expenses/' . $expense->id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm size-8"><i class="fa-solid fa-eraser"></i></button> ';
                     return $btn;
                 })
                 ->rawColumns(['aksi'])
@@ -32,12 +32,16 @@ class ExpenseController extends Controller
 
         $activeMenu = 'expenses';
 
+        $totalExpense = expense::where('type', 'expense')->sum('amount');
+        $totalIncome = expense::where('type', 'income')->sum('amount');
+        $balance = $totalIncome - $totalExpense;
+
         return view('index', [
             'page' => $page,
             'activeMenu' => $activeMenu,
-            'balance' => expense::select('balance')->sum('balance'),
-            'totalExpense' => expense::where('type', 'expense')->sum('amount'),
-            'totalIncome' => expense::where('type', 'income')->sum('amount'),
+            'balance' => $balance,
+            'totalExpense' => $totalExpense,
+            'totalIncome' => $totalIncome,
         ]);
     }
 
@@ -68,14 +72,24 @@ class ExpenseController extends Controller
                 ]);
             }
 
-            $data = $request->only(['title', 'amount', 'category', 'type', 'description']);
-            // $data['balance'] = 0; // default balance
 
+            $totalExpense = expense::where('type', 'expense')->sum('amount');
+            $totalIncome = expense::where('type', 'income')->sum('amount');
+            $balance = $totalIncome - $totalExpense;
+
+            if ($request->type == 'expense' && $request->amount > $balance) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Expense amount exceeds balance'
+                ]);
+            }
+
+            $data = $request->only(['title', 'amount', 'category', 'type', 'description']);
             Expense::create($data);
 
             return response()->json([
                 'status' => true,
-                'message' => 'Data has been saved!'
+                'message' => 'Data has been saved!',
             ]);
         }
 
@@ -109,7 +123,19 @@ class ExpenseController extends Controller
                 ]);
             }
 
+            $totalExpense = expense::where('type', 'expense')->sum('amount');
+            $totalIncome = expense::where('type', 'income')->sum('amount');
+            $balance = $totalIncome - $totalExpense;
+
             $expense = Expense::find($id);
+
+            if ($request->type == 'expense' && $request->amount > $balance + $expense->amount) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Expense amount exceeds balance'
+                ]);
+            }
+
             if ($expense) {
                 $expense->update($request->only(['title', 'amount', 'category', 'type', 'description']));
                 return response()->json([

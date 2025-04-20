@@ -75,6 +75,18 @@
 
     <script>
         $(document).ready(function() {
+            const prevType = "{{ $expense->type }}";
+            const prevAmount = parseFloat("{{ $expense->amount }}");
+
+            function formatted(numberToFormat) {
+                const formatted = new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 2
+                }).format(numberToFormat);
+
+                return formatted;
+            }
             $("#form-edit").validate({
                 rules: {
                     title: {
@@ -97,6 +109,9 @@
                     }
                 },
                 submitHandler: function(form) {
+                    const type = $('select[name="type"]').val();
+                    const amount = $('input[name="amount"]').val();
+
                     $.ajax({
                         url: form.action,
                         type: form.method,
@@ -110,6 +125,35 @@
                                     text: response.message
                                 });
                                 dataExpenses.ajax.reload();
+
+                                let finalIncome = incomeValue;
+                                let finalExpense = expenseValue;
+
+                                if (prevType === 'income' && type === 'income') {
+                                    finalIncome = incomeValue - prevAmount + parseFloat(
+                                        amount);
+                                } else if (prevType === 'expense' && type === 'expense') {
+                                    finalExpense = expenseValue - prevAmount + parseFloat(
+                                        amount);
+                                } else if (prevType === 'income' && type === 'expense') {
+                                    finalIncome = incomeValue - prevAmount;
+                                    finalExpense = expenseValue + parseFloat(amount);
+                                } else if (prevType === 'expense' && type === 'income') {
+                                    finalExpense = expenseValue - prevAmount;
+                                    finalIncome = incomeValue + parseFloat(amount);
+                                }
+
+                                // Update tampilan
+                                totalIncome.text(formatted(finalIncome));
+                                totalExpense.text(formatted(finalExpense));
+
+                                const newBalance = finalIncome - finalExpense;
+                                currentBalance.text(formatted(newBalance));
+
+                                // Update nilai variabel
+                                incomeValue = finalIncome;
+                                expenseValue = finalExpense;
+                                balanceValue = newBalance;
                             } else {
                                 $('.error-text').text('');
                                 $.each(response.msgField, function(prefix, val) {

@@ -45,12 +45,16 @@
         <!-- /.navbar -->
 
         <!-- Main Sidebar Container -->
-        <aside class="main-sidebar bg-white">
+        <aside class="main-sidebar bg-white border-r border-r-gray-200 !px-2">
             <!-- Brand Logo -->
             <a href="{{ url('/') }}" class="brand-link my-3">
-                <i class="fa-solid fa-money-bill-wheat fa-2xl rotate-12 mx-2" style="color: #63E6BE;"></i>
-                <span class="brand-text font-semibold font-poppins">Expense Tracker</span>
+                <i class="fa-solid fa-money-bill-wheat fa-xl rotate-12 mx-2 animate-wiggle animate-twice animate-duration-1000 animate-delay-1000"
+                    style="color: #63E6BE;"></i>
+                <span
+                    class="brand-text font-semibold font-poppins animate-jump-in animate-delay-300 animate-once">Expense
+                    Tracker</span>
             </a>
+            <div class="w-full bg-gray-200 h-[0.5px]"></div>
 
             <!-- Sidebar -->
             @include('layouts.sidebar')
@@ -74,7 +78,7 @@
 
     {{-- Font Awesome --}}
     <script src="https://kit.fontawesome.com/6a1f5752a8.js" crossorigin="anonymous"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- jQuery -->
     <script src="{{ asset('adminlte/plugins/jquery/jquery.min.js') }}"></script>
 
@@ -105,6 +109,7 @@
     <!-- SweetAlert2 -->
     <script src="{{ asset('adminlte/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 
+    @vite('resources/js/app.js')
 
     <!-- Untuk mengirimkan token Laravel CSRF pada setiap request ajax -->
     <script>

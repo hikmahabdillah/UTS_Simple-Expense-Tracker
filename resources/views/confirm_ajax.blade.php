@@ -17,7 +17,7 @@
         </div>
     </div>
 @else
-    <form action="{{ url('/' . $expense->id . '/delete_ajax') }}" method="POST" id="form-delete">
+    <form action="{{ url('/expenses/' . $expense->id . '/delete_ajax') }}" method="POST" id="form-delete">
         @csrf
         @method('DELETE')
         <div id="modal-master" class="modal-dialog modal-lg" role="document">
@@ -38,7 +38,7 @@
                         </tr>
                         <tr>
                             <th>Amount</th>
-                            <td>Rp {{ number_format($expense->amount, 2, ',', '.') }}</td>
+                            <td id="amount">Rp {{ number_format($expense->amount, 2, ',', '.') }}</td>
                         </tr>
                         <tr>
                             <th>Category</th>
@@ -46,11 +46,7 @@
                         </tr>
                         <tr>
                             <th>Type</th>
-                            <td>{{ ucfirst($expense->type) }}</td>
-                        </tr>
-                        <tr>
-                            <th>Balance at That Time</th>
-                            <td>Rp {{ number_format($expense->balance, 2, ',', '.') }}</td>
+                            <td id="type">{{ ucfirst($expense->type) }}</td>
                         </tr>
                     </table>
                 </div>
@@ -64,12 +60,38 @@
 
     <script>
         $(document).ready(function() {
+            function formatted(numberToFormat) {
+                const formatted = new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 2
+                }).format(numberToFormat);
+
+                return formatted;
+            }
+
+            function parseRupiah(rupiahString) {
+                if (!rupiahString) return 0;
+                return parseFloat(
+                    rupiahString
+                    .replace(/[^0-9,-]/g, '') // hilangkan selain angka, koma, dan minus
+                    .replace(/\./g, '') // hapus titik ribuan
+                    .replace(',', '.') // ubah koma ke titik agar bisa dibaca JS
+                );
+            }
+
             $("#form-delete").validate({
                 rules: {},
                 submitHandler: function(form) {
+                    const type = $('#type').text().trim().toLowerCase();
+                    const amount = parseRupiah($('#amount').text());
+
+                    console.log(type)
+                    console.log(amount)
+
                     $.ajax({
                         url: form.action,
-                        type: form.method,
+                        type: 'DELETE',
                         data: $(form).serialize(),
                         success: function(response) {
                             if (response.status) {
@@ -80,6 +102,27 @@
                                     text: response.message
                                 });
                                 dataExpenses.ajax.reload();
+
+                                let finalIncome = incomeValue;
+                                let finalExpense = expenseValue;
+
+                                if (type === 'income') {
+                                    finalIncome = incomeValue - amount;
+                                } else if (type === 'expense') {
+                                    finalExpense = expenseValue - amount;
+                                }
+
+                                const newBalance = finalIncome - finalExpense;
+
+                                // Tampilkan hasil ke UI
+                                totalIncome.text(formatted(finalIncome));
+                                totalExpense.text(formatted(finalExpense));
+                                currentBalance.text(formatted(newBalance));
+
+                                // Update nilai global
+                                incomeValue = finalIncome;
+                                expenseValue = finalExpense;
+                                balanceValue = newBalance;
                             } else {
                                 Swal.fire({
                                     icon: 'error',

@@ -61,6 +61,15 @@
 
 <script>
     $(document).ready(function() {
+        // Fungsi format IDR
+        function formatted(numberToFormat) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 2
+            }).format(numberToFormat);
+        }
+
         $("#form-add-expense").validate({
             rules: {
                 title: {
@@ -80,6 +89,12 @@
                 }
             },
             submitHandler: function(form) {
+                const type = $('select[name="type"]').val();
+                const amount = $('input[name="amount"]').val();
+
+                console.log(typeof(type))
+                console.log(typeof(amount))
+
                 $.ajax({
                     url: form.action,
                     type: form.method,
@@ -92,7 +107,37 @@
                                 title: 'Success',
                                 text: response.message
                             });
+
                             dataExpenses.ajax.reload();
+
+                            // Hitung ulang nilai akhir
+                            let finalIncome = incomeValue;
+                            let finalExpense = expenseValue;
+
+                            console.log(amount)
+                            console.log(type)
+                            console.log(incomeValue)
+                            console.log(expenseValue)
+                            console.log(finalIncome)
+                            console.log(finalExpense)
+
+                            if (type === 'income') {
+                                finalIncome = incomeValue + parseFloat(amount);
+                            } else if (type === 'expense') {
+                                finalExpense = expenseValue + parseFloat(amount);
+                            }
+
+                            const newBalance = finalIncome - finalExpense;
+
+                            // Tampilkan hasil ke UI
+                            totalIncome.text(formatted(finalIncome));
+                            totalExpense.text(formatted(finalExpense));
+                            currentBalance.text(formatted(newBalance));
+
+                            // Update nilai global
+                            incomeValue = finalIncome;
+                            expenseValue = finalExpense;
+                            balanceValue = newBalance;
                         } else {
                             $('.error-text').text('');
                             $.each(response.msgField, function(prefix, val) {

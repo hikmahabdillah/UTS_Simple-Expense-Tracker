@@ -15,7 +15,6 @@ class ExpenseTableSeeder extends Seeder
     {
         DB::table('expenses')->insert([
             [
-                'balance' => 0,
                 'title' => 'Lunch at cafe',
                 'amount' => 50000,
                 'category' => 'food',
@@ -25,7 +24,6 @@ class ExpenseTableSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'balance' => 0,
                 'title' => 'Monthly internet bill',
                 'amount' => 300000,
                 'category' => 'bills',
@@ -35,17 +33,15 @@ class ExpenseTableSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'balance' => 0,
-                'title' => 'Gaji Bulanan',
+                'title' => 'Monthly Salary',
                 'amount' => 5000000,
                 'category' => 'others',
                 'type' => 'income',
-                'description' => 'Pendapatan utama dari kantor',
+                'description' => 'My Salary',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'balance' => 0,
                 'title' => 'Grab Ride to Campus',
                 'amount' => 25000,
                 'category' => 'transportation',
@@ -55,12 +51,11 @@ class ExpenseTableSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'balance' => 0,
-                'title' => 'Beli Buku',
+                'title' => 'Buy A Book',
                 'amount' => 100000,
                 'category' => 'education',
                 'type' => 'expense',
-                'description' => 'Buku pemrograman Laravel',
+                'description' => 'How to be who you want to be',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
