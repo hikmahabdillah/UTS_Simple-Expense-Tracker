@@ -11,7 +11,7 @@
                     <h5><i class="icon fas fa-ban"></i> Error!</h5>
                     The data you are looking for was not found.
                 </div>
-                <a href="{{ url('/expenses') }}" class="btn btn-warning">Back</a>
+                <a href="{{ url('/') }}" class="btn btn-warning">Back</a>
             </div>
         </div>
     </div>
@@ -35,6 +35,7 @@
                     </tr>
                     <tr>
                         <th>Category</th>
+                        {{-- untuk kapitalkan huruf pertama --}}
                         <td>{{ ucfirst($expense->category) }}</td>
                     </tr>
                     <tr>

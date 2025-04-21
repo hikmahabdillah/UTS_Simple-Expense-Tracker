@@ -17,7 +17,7 @@
         </div>
     </div>
 @else
-    <form action="{{ url('/expenses/' . $expense->id . '/delete_ajax') }}" method="POST" id="form-delete">
+    <form action="{{ url('/' . $expense->id . '/delete_ajax') }}" method="POST" id="form-delete">
         @csrf
         @method('DELETE')
         <div id="modal-master" class="modal-dialog modal-lg" role="document">
@@ -103,6 +103,8 @@
                                 });
                                 dataExpenses.ajax.reload();
 
+                                // Hitung ulang nilai akhir
+                                // /untuk  menyimpan nilai final yang akan ditampilkan
                                 let finalIncome = incomeValue;
                                 let finalExpense = expenseValue;
 
@@ -112,6 +114,7 @@
                                     finalExpense = expenseValue - amount;
                                 }
 
+                                // nilai saldo terbaru(setelah terjadi penghapusan data)
                                 const newBalance = finalIncome - finalExpense;
 
                                 // Tampilkan hasil ke UI
@@ -119,7 +122,7 @@
                                 totalExpense.text(formatted(finalExpense));
                                 currentBalance.text(formatted(newBalance));
 
-                                // Update nilai global
+                                // Update nilai global yang nantinya akan digunakan oleh halaman lain
                                 incomeValue = finalIncome;
                                 expenseValue = finalExpense;
                                 balanceValue = newBalance;

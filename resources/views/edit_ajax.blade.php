@@ -17,8 +17,11 @@
     </div>
 @else
     <form action="{{ url('/' . $expense->id . '/update_ajax') }}" method="POST" id="form-edit">
+        {{-- Menambahkan token khusus (_token) ke form sebagai input tersembunyi (hidden input).
+Token ini akan diverifikasi oleh Laravel saat form disubmit.
+Jika token tidak valid atau tidak ada, maka request akan ditolak oleh server Laravel demi keamana --}}
         @csrf
-        @method('PUT')
+        @method('PUT') {{-- Menggunakan method PUT untuk mengubah data --}}
         <div id="modal-master" class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -75,9 +78,11 @@
 
     <script>
         $(document).ready(function() {
+            // variable untuk menyimpan data sebelumnya sebelum di edit
             const prevType = "{{ $expense->type }}";
             const prevAmount = parseFloat("{{ $expense->amount }}");
 
+            // Fungsi format IDR
             function formatted(numberToFormat) {
                 const formatted = new Intl.NumberFormat('id-ID', {
                     style: 'currency',
@@ -126,13 +131,18 @@
                                 });
                                 dataExpenses.ajax.reload();
 
+                                // Hitung ulang nilai akhir
+                                // /untuk  menyimpan nilai final yang akan ditampilkan
                                 let finalIncome = incomeValue;
                                 let finalExpense = expenseValue;
 
+                                // perhitungan untuk pemasukkan dan pengeluaran setelah di edit
                                 if (prevType === 'income' && type === 'income') {
+                                    // nilai final dikurangi dengan nilai sebelumnya dan ditambahkan dengan nilai baru
                                     finalIncome = incomeValue - prevAmount + parseFloat(
                                         amount);
                                 } else if (prevType === 'expense' && type === 'expense') {
+                                    // nilai final dikurangi dengan nilai sebelumnya dan ditambahkan dengan nilai baru
                                     finalExpense = expenseValue - prevAmount + parseFloat(
                                         amount);
                                 } else if (prevType === 'income' && type === 'expense') {
@@ -147,10 +157,11 @@
                                 totalIncome.text(formatted(finalIncome));
                                 totalExpense.text(formatted(finalExpense));
 
+                                // nilai saldo terbaru(setelah terjadi pembaruan data)
                                 const newBalance = finalIncome - finalExpense;
                                 currentBalance.text(formatted(newBalance));
 
-                                // Update nilai variabel
+                                // Update nilai global yang nantinya akan digunakan oleh halaman lain
                                 incomeValue = finalIncome;
                                 expenseValue = finalExpense;
                                 balanceValue = newBalance;

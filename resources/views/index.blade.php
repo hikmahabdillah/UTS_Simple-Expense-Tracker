@@ -60,16 +60,19 @@
 
 @push('js')
     <script>
+        // fungsi untuk keseluruhan modal di url manapun
         function modalAction(url = '') {
-            $('#myModal').load(url, function() {
+            $('#myModal').load(url, function() { //  Mengisi isi modal (#myModal) dengan konten dari URL yang diberikan.
                 $('#myModal').modal('show');
             });
         }
 
+        // mengambil elemen
         let currentBalance = $('#currentBalance');
         let totalExpense = $('#totalExpense');
         let totalIncome = $('#totalIncome');
 
+        // fungsi untuk merubah format string rupiah menjadi sebuah value bertipe float
         function parseRupiah(rupiahString) {
             if (!rupiahString) return 0;
             return parseFloat(
@@ -80,6 +83,7 @@
             );
         }
 
+        // nilai global untuk nilai saldo, totalPengeluaran, totalPemasukkan yang sudah diparsing
         let balanceValue = parseRupiah(currentBalance.text());
         let expenseValue = parseRupiah(totalExpense.text());
         let incomeValue = parseRupiah(totalIncome.text());

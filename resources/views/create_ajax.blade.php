@@ -92,9 +92,6 @@
                 const type = $('select[name="type"]').val();
                 const amount = $('input[name="amount"]').val();
 
-                console.log(typeof(type))
-                console.log(typeof(amount))
-
                 $.ajax({
                     url: form.action,
                     type: form.method,
@@ -111,15 +108,9 @@
                             dataExpenses.ajax.reload();
 
                             // Hitung ulang nilai akhir
+                            // /untuk  menyimpan nilai final yang akan ditampilkan
                             let finalIncome = incomeValue;
                             let finalExpense = expenseValue;
-
-                            console.log(amount)
-                            console.log(type)
-                            console.log(incomeValue)
-                            console.log(expenseValue)
-                            console.log(finalIncome)
-                            console.log(finalExpense)
 
                             if (type === 'income') {
                                 finalIncome = incomeValue + parseFloat(amount);
@@ -127,6 +118,7 @@
                                 finalExpense = expenseValue + parseFloat(amount);
                             }
 
+                            // nilai saldo terbaru(setelah terjadi penambahan data)
                             const newBalance = finalIncome - finalExpense;
 
                             // Tampilkan hasil ke UI
@@ -134,7 +126,7 @@
                             totalExpense.text(formatted(finalExpense));
                             currentBalance.text(formatted(newBalance));
 
-                            // Update nilai global
+                            // Update nilai global yang nantinya akan digunakan oleh halaman lain
                             incomeValue = finalIncome;
                             expenseValue = finalExpense;
                             balanceValue = newBalance;

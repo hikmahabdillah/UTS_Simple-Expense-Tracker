@@ -42,9 +42,9 @@
         const categoryExpenseChart = new Chart(categoryCtx, {
             type: 'doughnut',
             data: {
-                labels: {!! json_encode($categoryExpenses->pluck('category')) !!},
+                labels: {!! json_encode($categoryExpenses->pluck('category')) !!}, //ambil daftar nama kategori
                 datasets: [{
-                    data: {!! json_encode($categoryExpenses->pluck('total')) !!},
+                    data: {!! json_encode($categoryExpenses->pluck('total')) !!}, // ambil total pengeluaran per kategori
                     backgroundColor: [
                         '#F87171', '#FBBF24', '#34D399',
                         '#60A5FA', '#A78BFA', '#F472B6', '#9CA3AF'
@@ -67,17 +67,17 @@
         const dailyChart = new Chart(dailyCtx, {
             type: 'line',
             data: {
-                labels: {!! json_encode($dailyData->pluck('date')) !!},
+                labels: {!! json_encode($dailyData->pluck('date')) !!}, // ambil daftar tanggal
                 datasets: [{
                     label: 'Income',
-                    data: {!! json_encode($dailyData->pluck('income')) !!},
+                    data: {!! json_encode($dailyData->pluck('income')) !!}, //total pemasukan per hari
                     borderColor: '#4CAF50',
                     backgroundColor: '#4CAF5099',
                     tension: 0.3,
                     fill: false
                 }, {
                     label: 'Expense',
-                    data: {!! json_encode($dailyData->pluck('expense')) !!},
+                    data: {!! json_encode($dailyData->pluck('expense')) !!}, // total pengeluaran per hari
                     borderColor: '#F44336',
                     backgroundColor: '#F4433699',
                     tension: 0.3,
